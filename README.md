@@ -18,9 +18,9 @@ The following table lists the configurable parameters of the cert-manager chart 
 | Parameter | Description | Default |
 | --------- | ----------- | ------- |
 | `groupName` | Group name of the API service. | `dns.hetzner.cloud` |
-| `certManager.namespace` | Namespace where cert-manager is deployed to. | `kube-system` |
+| `certManager.namespace` | Namespace where cert-manager is deployed to. | `cert-manager` |
 | `certManager.serviceAccountName` | Service account of cert-manager installation. | `cert-manager` |
-| `image.repository` | Image repository | `mecodia/cert-manager-webhook-hetzner` |
+| `image.repository` | Image repository | `modzilla/cert-manager-webhook-hetzner` |
 | `image.tag` | Image tag | `latest` |
 | `image.pullPolicy` | Image pull policy | `Always` |
 | `service.type` | API service type | `ClusterIP` |
@@ -39,16 +39,16 @@ Follow the [instructions](https://cert-manager.io/docs/installation/) using the 
 ### Webhook
 
 ```bash
-git clone https://github.com/mecodia/cert-manager-webhook-hetzner.git
+git clone https://github.com/modzilla/cert-manager-webhook-hetzner.git
 cd cert-manager-webhook-hetzner
-helm install --namespace kube-system cert-manager-webhook-hetzner ./deploy/cert-manager-webhook-hetzner
+helm install --namespace cert-manager cert-manager-webhook-hetzner ./deploy/cert-manager-webhook-hetzner
 ```
 
 **Note**: The kubernetes resources used to install the Webhook should be deployed within the same namespace as the cert-manager.
 
 To uninstall the webhook run
 ```bash
-helm uninstall --namespace kube-system cert-manager-webhook-hetzner
+helm uninstall --namespace cert-manager cert-manager-webhook-hetzner
 ```
 
 ## Issuer
@@ -65,7 +65,7 @@ spec:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
 
     # Email address used for ACME registration
-    email: mail@example.com # REPLACE THIS WITH YOUR EMAIL!!!
+    email: mail@example.com # This needs to be replaced with a valid E-Mail of yours!
 
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
@@ -143,5 +143,6 @@ sudo microk8s.enable dns rbac
 sudo microk8s.kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
 sudo microk8s.config > /tmp/microk8s.config
 export KUBECONFIG=/tmp/microk8s.config
-helm install --namespace kube-system cert-manager-webhook-hetzner deploy/hetzner-webhook
+git clone https://github.com/modzilla/cert-manager-webhook-hetzner.git
+helm install --namespace cert-manager cert-manager-webhook-hetzner cert-manager-webhook-hetzner/deploy/cert-manager-webhook-hetzner
 ```
