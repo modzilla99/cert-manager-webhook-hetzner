@@ -9,11 +9,11 @@
 groupName: dns.hetzner.cloud
 
 certManager:
-  namespace: kube-system
+  namespace: cert-manager
   serviceAccountName: cert-manager
 
 image:
-  repository: mecodia/cert-manager-webhook-hetzner
+  repository: modzilla/cert-manager-webhook-hetzner
   tag: latest
   pullPolicy: Always
 
