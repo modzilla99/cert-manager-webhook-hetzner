@@ -1,4 +1,4 @@
-IMAGE_NAME := "mecodia/cert-manager-webhook-hetzner"
+IMAGE_NAME := "modzilla/cert-manager-webhook-hetzner"
 IMAGE_TAG := "latest"
 
 OUT := $(shell pwd)/_out
