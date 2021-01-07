@@ -1,7 +1,7 @@
 # ACME Webhook for Hetzner DNS
 
 This project provides a [cert-manager](https://cert-manager.io) ACME Webhook for [Hetzner DNS](https://hetzner.de/) 
-and is based on the [Example Webhook](https://github.com/jetstack/cert-manager-webhook-example)
+and is based on the [Hetzner Webhook](https://github.com/mecodia/cert-manager-webhook-hetzner)
 
 This README and the inspiration for this webhook was mostly taken from [Stephan Müllers INWX Webhook](https://gitlab.com/smueller18/cert-manager-webhook-inwx)
 
@@ -17,7 +17,8 @@ The following table lists the configurable parameters of the cert-manager chart 
 
 | Parameter | Description | Default |
 | --------- | ----------- | ------- |
-| `groupName` | Group name of the API service. | `dns.hetzner.cloud` |
+| `Env.secretName` | Name of API-Key-Secret | `hetzner-secret` |
+| `Env.groupName` | Group name of the API service. | `dns.hetzner.cloud` |
 | `certManager.namespace` | Namespace where cert-manager is deployed to. | `cert-manager` |
 | `certManager.serviceAccountName` | Service account of cert-manager installation. | `cert-manager` |
 | `image.repository` | Image repository | `modzilla/cert-manager-webhook-hetzner` |
@@ -35,6 +36,7 @@ The following table lists the configurable parameters of the cert-manager chart 
 ### cert-manager
 
 Follow the [instructions](https://cert-manager.io/docs/installation/) using the cert-manager documentation to install it within your cluster.
+The default setup assumes cert-manager to be installed in it's own namespace called `cert-manager`.
 
 ### Webhook
 
@@ -63,28 +65,52 @@ spec:
   acme:
     # The ACME server URL
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-
     # Email address used for ACME registration
     email: mail@example.com # This needs to be replaced with a valid E-Mail of yours!
-
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: letsencrypt-staging
+    solvers:
+      - dns01:
+          webhook:
+            groupName: dns.hetzner.cloud
+            solverName: hetzner
+```
 
+Or like this if you don't want to mount the API-Key as a Kubernetes-Secret:
+```yaml
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: mail@example.com # This needs to be replaced with a valid E-Mail of yours!
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-staging
     solvers:
       - dns01:
           webhook:
             groupName: dns.hetzner.cloud
             solverName: hetzner
             config:
-              APIKey: <YOUR-DNS-API-KEY-HERE>
+              APIKey: llyBjL1w6BRMnTaGlqg4d7RRhDB8BQDy
 ```
 
 ### Credentials
 
 For accessing the Hetzner DNS API, you need an API Token which you can create in the [DNS Console](https://dns.hetzner.com/settings/api-token).
 
-Currently we don't provide a way to use secrets for you API KEY.
+Currently we only provide a very basic way to use secrets.
+
+First you need to bas64 encode the API-Key with either `printf` or `echo -h` so that it doesn't output a new line at the end.
+```bash
+printf "llyBjL1w6BRMnTaGlqg4d7RRhDB8BQDy" | base64 
+```
 
 ### Create a certificate
 

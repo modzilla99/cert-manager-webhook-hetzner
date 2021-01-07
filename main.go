@@ -281,12 +281,12 @@ func loadConfig(cfgJSON *extapi.JSON) (hetznerDNSProviderConfig, error) {
 	cfg := hetznerDNSProviderConfig{}
 	// handle the 'base case' where no configuration has been provided
 	if cfgJSON == nil {
+		cfg.APIKey = os.Getenv("APIKey")
 		return cfg, nil
 	}
 	if err := json.Unmarshal(cfgJSON.Raw, &cfg); err != nil {
 		return cfg, fmt.Errorf("error decoding solver config: %v", err)
 	}
-
 	return cfg, nil
 }
 
