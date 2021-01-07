@@ -111,6 +111,17 @@ First you need to bas64 encode the API-Key with either `printf` or `echo -h` so 
 ```bash
 printf "llyBjL1w6BRMnTaGlqg4d7RRhDB8BQDy" | base64 
 ```
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hetzner-secret
+  namespace: cert-manager
+type: Opaque
+data:
+  APIKey: bGx5QmpMMXc2QlJNblRhR2xxZzRkN1JSaERCOEJRRHk=
+```
+
 
 ### Create a certificate
 
